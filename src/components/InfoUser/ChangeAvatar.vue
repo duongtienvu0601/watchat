@@ -6,7 +6,7 @@
 
             <div class="file-search-button">
                 <label for="file-upload" class="custom-file-upload">
-                    Chọn ảnh từ máy
+                    Chọn ảnh từ máy của bạn
                 </label>
                 <input id="file-upload" type="file" @change=uploadImage />
             </div>

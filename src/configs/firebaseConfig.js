@@ -46,7 +46,7 @@ export const uiConfig = {
 					localStorage.setItem('user', JSON.stringify(user))
 				} else {
 					console.log(users.data[0])
-					if(!useusers.data[0].avatar)
+					if(!users.data[0].avatar)
 					{
 						await firestoreService.updateUser(users.data[0].id, {
 							avatar: authResult.user.photoURL ?? NO_AVATAR_URL
