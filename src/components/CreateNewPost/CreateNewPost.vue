@@ -113,9 +113,9 @@ export default ({
                     comments: 0,
                     title: this.caption
                 }
-                const newCityRef = doc(collection(firestoreDb, "posts"));
-                await setDoc(newCityRef, object);
-                this.posts.unshift({...object,'id': newCityRef.id.trim().toString()});
+                const newPost = doc(collection(firestoreDb, "posts"));
+                await setDoc(newPost, object);
+                this.posts.unshift({...object,'id': newPost.id.trim().toString()});
                 this.method()
             }
 

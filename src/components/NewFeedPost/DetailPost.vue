@@ -218,7 +218,7 @@ export default {
             // }
         },
         handleLikePostStatus(postId) {
-            const checkLike = this.likes.filter((i) => { return i.idPost === postId })
+            const checkLike = this.likes.filter((i) => { return (i.idPost === postId && i.idUser === JSON.parse(localStorage.getItem('user')).id) })
             if (checkLike.length === 0) {
                 return false;
             } else {
