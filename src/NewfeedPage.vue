@@ -271,7 +271,7 @@ export default ({
     },
     methods: {
         async handleLikePost(postId) {
-            const arr = this.likes.filter(i => { return i.idPost === postId });
+            const arr = this.likes.filter(i => { return i.idPost === postId && i.idUser === JSON.parse(localStorage.getItem('user')).id });
             if (arr.length !== 0) {
                 // Trường hợp unlike
 
@@ -280,6 +280,7 @@ export default ({
 
                 this.posts.map(i => {
                     if (i.id === postId) {
+                        if(i.likes === 0) return;
                         i.likes = i.likes - 1;
                         return postObject = i;
                     }
@@ -289,17 +290,17 @@ export default ({
 
                 this.likes.map(i => {
                     if (i.idPost.trim().toString() === postId) {
-                        // i.likes = i.likes - 1;
                         idToRemove = i.id;
                         return;
                     }
                 })
 
                 await deleteDoc(doc(firestoreDb, "like", idToRemove));
-
-                return this.likes = this.likes.filter(i => { return i.idPost.trim().toString() !== postId })
+                
+                return this.likes = this.likes.filter(i => { return i.idUser !== JSON.parse(localStorage.getItem('user')).id })
             } else {
                 // Trường hợp like
+
                 const fetchData = async () => {
 
                     let object = {};
@@ -313,15 +314,19 @@ export default ({
 
                     await setDoc(doc(firestoreDb, "posts", postId), object);
 
-                    const docRef = await addDoc(collection(firestoreDb, "like"), {
+                    const newLike = doc(collection(firestoreDb, "like"));
+
+                    let objectLike = {
                         idPost: postId,
                         idUser: JSON.parse(localStorage.getItem('user')).id,
                         name: JSON.parse(localStorage.getItem('user')).username,
                         userName: JSON.parse(localStorage.getItem('user')).username,
                         avatar: JSON.parse(localStorage.getItem('user')).avatar
-                    })
+                    }
+                    await setDoc(newLike, objectLike);
+
                     this.likes.push(
-                        { id: docRef.id, idPost: postId, uid: JSON.parse(localStorage.getItem('user')).id }
+                        {...objectLike, id: newLike.id.trim().toString()}
                     )
                 }
 
@@ -329,10 +334,10 @@ export default ({
             }
         },
         handleLikePostStatus(postId) {
-            const checkLike = this.likes.filter((i) => { return i.idPost === postId })
+            const checkLike = this.likes.filter((i) => { return (i.idPost === postId && i.idUser === JSON.parse(localStorage.getItem('user')).id) })
             if (checkLike.length === 0) {
                 return false;
-            } else {
+            } else{
                 return true;
             }
         },
@@ -392,10 +397,7 @@ export default ({
             getListLike()
         },
         handleDisplayTime(date) {
-            const time =
-
-                new Date(Date.now()).getDate()
-                - new Date(date).getDate();
+            const time = new Date(Date.now()).getDate() - new Date(date).getDate();
             if (time > 0) {
                 return `${time} Ngày trước`;
             } else {
